@@ -300,3 +300,31 @@ def insert_manual_reading(ph, tss, nh3n, cod, depth, debit, rainfall, temperatur
     except Exception as e:
         print(f"[ERROR] Gagal memasukkan data ke database: {e}")
     
+def data_kalibrasi(parameter):
+    
+    try:
+        # Membuka koneksi
+        conn = mysql.connector.connect(**MYSQL_CONFIG)
+        cursor = conn.cursor()
+
+        # Query SQL
+        query = "SELECT `offset` FROM `tbl_kalibrasi` WHERE `name`=%s"
+
+        # Jalankan query
+        cursor.execute(query,(parameter,))
+        result = cursor.fetchone() # Ambil nilai langsung
+        if result:
+            offset = result[0]
+            return float(offset)
+        else:
+            print("Kalibrasi Parameter tidak di ketahui")
+            return int(0)
+
+    except Exception as e:
+        print(f"Terjadi kesalahan: {e}")
+        return int(0)
+
+    finally:
+        # Tutup koneksi
+        if 'cursor' in locals(): cursor.close()
+        if 'conn' in locals(): conn.close()
